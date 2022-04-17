@@ -160,12 +160,13 @@ class _NavDrawerState extends State<NavDrawer> {
               title: const Text(
                 'Logout',
               ),
-              onTap: () async {
-                await signOut();
-                if (auth.currentUser == null) {
-                  Navigator.pushNamed(context, Login.id);
+              onTap: ()  {FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Login()),
+                      (Route<dynamic> route) => false);
+
                 }
-              },
+              ,
 
 
             ),

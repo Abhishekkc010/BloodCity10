@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:ui';
+
 
 import 'package:applicationtwo/Datamodel.dart';
+import 'package:applicationtwo/NotificationModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -18,15 +19,20 @@ class DetailProduct extends StatefulWidget {
 class _DetailProductState extends State<DetailProduct> {
   String url = "$ip/first/v1/request";
       // "http://192.168.100.215:8000/first/v1/request";
-  String requestUrl = "/$ip/first/v1/donor";
-      // "http://10.0.2.2:8000/first/v1/donor";
+  String requestUrl = "$ip/first/v1/donor/";
+
   final auth = FirebaseAuth.instance;
   //
-  int? Id;
-  String? Name;
-  String? BloodType;
-  String? City;
-  String? State;
+  int? ReqId;
+  String? ReqName;
+  String? ReqPhone;
+  String? ReqBloodType;
+  String? ReqCity;
+  String? ReqState;
+  String? ReqEmail;
+  String? PostEmail;
+  String? ReqUserID;
+  String? PostUserId;
   bool isWaiting = true;
   Future<List<DataModel>> _getSpecificProductList() async {
     isWaiting = false;
@@ -38,27 +44,91 @@ class _DetailProductState extends State<DetailProduct> {
     print(productResponseData);
     List<DataModel> productDetails = [];
     // for (var i in productResponseData) {
-    DataModel products = DataModel(
-      id: productResponseData['id'],
-      Name: productResponseData['Name'],
-      BloodType: productResponseData['BloodType'],
-      City: productResponseData['City'],
-      State: productResponseData['State'],
-    );
+    // DataModel products = DataModel(
+    //   id: productResponseData['id'],
+    //   Name: productResponseData['Name'],
+    //   Phone: productResponseData['Phone'],
+    //   BloodType: productResponseData['BloodType'],
+    //   City: productResponseData['City'],
+    //   State: productResponseData['State'],
+    //   UserID: productResponseData['UserID'],
+    //   Email: productResponseData['Email'],
+    // );
     setState(() {
-      Id = productResponseData['id'];
-      Name = productResponseData['Name'];
-      BloodType = productResponseData['BloodType'];
-      City = productResponseData['City'];
-      State = productResponseData['State'];
+      ReqId = productResponseData['id'];
+      ReqName = productResponseData['Name'];
+      ReqPhone= productResponseData['Phone'];
+      ReqBloodType = productResponseData['BloodType'];
+      ReqCity = productResponseData['City'];
+      ReqState = productResponseData['State'];
+      ReqUserID= productResponseData['UserID'];
+      PostEmail = productResponseData['UserEmail'];
+      PostUserId= productResponseData['PostUserId'];
+
     });
 
-    productDetails.add(products);
+    // productDetails.add(products);
     // print(productDetails);
     // }
 
     return productDetails;
   }
+
+
+
+  requestProd() async {
+    String? Name = ReqName;
+    String? Phone= ReqPhone;
+    String? postUserId = ReqUserID;
+    String? requestUserId = auth.currentUser!.uid;
+    String? postEmail = PostEmail;
+    String? requestEmail = auth.currentUser!.email;
+    String? BloodType = ReqBloodType;
+    String? City = ReqCity;
+
+    NotificationModel donor = NotificationModel(
+      id: 0,
+      Name: Name,
+      Phone: Phone,
+      requestUserId:requestUserId,
+      postUserId:postUserId,
+      requestEmail:requestEmail,
+      postEmail:postEmail,
+      isAccepted:false,
+      BloodType:BloodType,
+      City:City,
+
+    );
+
+    var response = await post(Uri.parse(requestUrl),
+        body: json.encode(donor),
+        headers: {'Content-Type': 'application/json'});
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 201) {
+      const snackBar = SnackBar(content: Text('The Request has been sent!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      const snackBar =
+      SnackBar(content: Text('The Request could not be sent!'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+// NotificationModel donor = NotificationModel(
+//     id: 0,
+//     Name: Name,
+//     Phone: Phone,
+//     requestUserId:requestUserId,
+//     postUserId:postUserId,
+//     requestEmail:requestEmail,
+//     postEmail:postEmail,
+//     isAccepted:false,
+//     BloodType:BloodType,
+//     City:City,
+//
+// )
+
 
   @override
   void initState() {
@@ -137,7 +207,7 @@ class _DetailProductState extends State<DetailProduct> {
           //     // borderRadius: BorderRadius.circular(70.0),
           //     borderRadius: const BorderRadius.all(Radius.circular(40))),
                   Text(
-                    isWaiting ? '?' : 'BloodGroup: ${BloodType.toString()}',
+                    isWaiting ? '?' : 'BloodGroup: ${ReqBloodType.toString()}',
                     style: TextStyle(
                       fontSize: 45,
                       fontStyle: FontStyle.normal,
@@ -153,12 +223,27 @@ class _DetailProductState extends State<DetailProduct> {
                     ),
                   ),
                 // ),
-
+                Text(
+                  isWaiting ? '?' : 'Phone: ${ReqPhone.toString()}',
+                  style: TextStyle(
+                    fontSize: 45,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black54,
+                        blurRadius: 5,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(
                   height: 15,
                 ),
                 Text(
-                  isWaiting ? '?' : 'Name: ${Name.toString()}',
+                  isWaiting ? '?' : 'Name: ${ReqName.toString()}',
                   style: TextStyle(
                     fontSize: 40,
                     foreground: Paint()
@@ -204,7 +289,7 @@ class _DetailProductState extends State<DetailProduct> {
 
 
                 Text(
-                  isWaiting ? '?' : 'City: ${City.toString()}',
+                  isWaiting ? '?' : 'City: ${ReqCity.toString()}',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight:FontWeight.bold,
@@ -217,7 +302,7 @@ class _DetailProductState extends State<DetailProduct> {
                 SizedBox(height: 5,),
 
                 Text(
-                  isWaiting ? '?' : 'State: ${State.toString()}',
+                  isWaiting ? '?' : 'State: ${ReqState.toString()}',
                   style: TextStyle(
                     fontWeight:FontWeight.bold,
                     fontSize: 30,
@@ -227,6 +312,21 @@ class _DetailProductState extends State<DetailProduct> {
                       ..color = Color.fromARGB(255, 134, 16, 16),
                   ),
                 ),
+
+
+                      Text(
+                        isWaiting ? '?' : 'Email: ${PostEmail.toString()}',
+                        style: TextStyle(
+                          fontWeight:FontWeight.bold,
+                          fontSize: 30,
+                          foreground: Paint()
+                            ..style = PaintingStyle.fill
+                            ..strokeWidth = 6
+                            ..color = Color.fromARGB(255, 134, 16, 16),
+                        ),
+                      ),
+
+
 
                     ],
                   ),
@@ -247,7 +347,10 @@ class _DetailProductState extends State<DetailProduct> {
                         Color.fromARGB(255, 233, 56, 56),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      requestProd();
+
+                    },
                     child: const Text('Request To Donate'))
                 // Expanded(
                 //     child: Image(

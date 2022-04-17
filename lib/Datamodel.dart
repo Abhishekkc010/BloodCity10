@@ -3,7 +3,7 @@ import 'package:http/http.dart';
 class DataModel {
   int? id;
   String? Name;
-  String? Email;
+  String? UserEmail;
   String? Phone;
   String? BloodType;
   String? State;
@@ -17,11 +17,12 @@ class DataModel {
   String? Post;
   String? Gender;
 
+
   DataModel({
     this.id,
     this.Phone,
     this.BloodType,
-    this.Email,
+    this.UserEmail,
     this.State,
     this.District,
     this.City,
@@ -39,7 +40,7 @@ class DataModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id']=id;
     data['Name'] = Name;
-    data['Email'] = Email;
+    data['UserEmail'] = UserEmail;
     data['Phone'] = Phone;
     data['BloodType'] = BloodType;
     data['State'] = State;

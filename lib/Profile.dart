@@ -36,7 +36,7 @@ class _ProfileAppState extends State<ProfileApp> {
       DataModel datas = DataModel(
           BloodType: i['BloodType'],
           Name: i['Name'],
-          Email: i['Email'],
+          UserEmail: i['UserEmail'],
           Gender: i['Gender'],
           id: i['id'],
           City: i['City'],
@@ -76,7 +76,7 @@ class _ProfileAppState extends State<ProfileApp> {
                 return ListView.builder(
                     itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
-                      if ('${snapshot.data[index].Email}' ==
+                      if ('${snapshot.data[index].UserEmail}' ==
                           FirebaseAuth.instance.currentUser!.email) {
 
                         return Padding(

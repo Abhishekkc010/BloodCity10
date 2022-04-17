@@ -65,6 +65,7 @@ class _AddProductState extends State<AddProduct> {
     String Name = AddProduct.Name.value.text;
     String Phone = AddProduct.Phone.value.text;
     String BloodType = dropdownValue;
+    String? UserEmail= FirebaseAuth.instance.currentUser!.email;
     String Gender = dropdownValueGender;
     String State = dropdownValuetwo;
     String District = dropdownValuedistrict;
@@ -87,12 +88,15 @@ class _AddProductState extends State<AddProduct> {
       HospitalName: HospitalName,
       DetailAboutCase: DetailAboutCase,
       UserID: UserId,
+      UserEmail: UserEmail,
     );
 
     var response = await post(Uri.parse(url),
         body: json.encode(postProduct),
         headers: {'Content-Type': 'application/json'});
     print(response.statusCode);
+
+
   }
 
   @override

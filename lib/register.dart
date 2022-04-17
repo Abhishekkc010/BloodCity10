@@ -79,7 +79,7 @@ class _RegistrationState extends State<Registration> {
 
     DataModel postProduct = DataModel(
       Name: Name,
-      Email: Email,
+      UserEmail: Email,
       Phone: Phone,
       BloodType: BloodType,
       Gender: Gender,
